@@ -1,6 +1,8 @@
 package com.example.examenciclo8.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +14,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.examenciclo8.Clases.Cuenta;
+import com.example.examenciclo8.DetallesCuentaActivity;
 import com.example.examenciclo8.R;
+import com.example.examenciclo8.Service.CuentaService;
+import com.example.examenciclo8.Utilities.RetrofitU;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 public class CuentaAdapter extends RecyclerView.Adapter {
 
     private List<Cuenta> cuentas;
+    Retrofit mRetrofit;
     private Context context;
 
     public CuentaAdapter(List<Cuenta> cuentas, Context context) {
@@ -52,12 +63,20 @@ public class CuentaAdapter extends RecyclerView.Adapter {
         View view = holder.itemView;
 
         TextView tvName = view.findViewById(R.id.tvName);
-        Button bttnRegistrar = view.findViewById(R.id.Registrar);
-        Button bttnMostrar = view.findViewById(R.id.Mostrar);
-        Button bttnSincronizar = view.findViewById(R.id.Sincronizar);
 
 
         tvName.setText(item.getNombre());
+        mRetrofit = RetrofitU.build();
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =  new Intent(context, DetallesCuentaActivity.class);
+                intent.putExtra("position", item.getId());
+                context.startActivity(intent);
+            }
+        });
+
 
     }
 

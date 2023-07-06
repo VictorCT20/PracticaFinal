@@ -47,6 +47,7 @@ public class ListaCuentasActivity extends AppCompatActivity {
 
         mRetrofit = RetrofitU.build();
         Button btnRegistro = findViewById(R.id.bttnRegistro);
+        Button btnActualizar = findViewById(R.id.bttnActualizar);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mRvLista =  findViewById(R.id.rvListaCuentas);
@@ -76,19 +77,7 @@ public class ListaCuentasActivity extends AppCompatActivity {
             }
         });
 
-        if (!isNetworkConnected()) {
-            AppDatabase db = AppDatabase.getInstance(context);
-            CuentaRepository repository = db.cuentaRepository();
-            List<Cuenta> users = repository.getAll();
-            Log.i("MAIN_APP: DB", new Gson().toJson(users));
-            mAdapter.setCuentas(users);
-            mAdapter.notifyDataSetChanged();
 
-            DatosSinInternet(); // Llamada al método DatosSinInternet()
-        } else {
-            uploadToWebService(mPage);
-            loadMore(mPage);
-        }
 
         btnRegistro.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +88,19 @@ public class ListaCuentasActivity extends AppCompatActivity {
             }
         });
 
+        btnActualizar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uploadToWebService(1);
+            }
+        });
+
+        AppDatabase db = AppDatabase.getInstance(context);
+        CuentaRepository repository = db.cuentaRepository();
+        List<Cuenta> users = repository.getAll();
+        Log.i("MAIN_APP: DB", new Gson().toJson(users));
+        mAdapter.setCuentas(users);
+        mAdapter.notifyDataSetChanged();
 
     }
 
@@ -109,8 +111,8 @@ public class ListaCuentasActivity extends AppCompatActivity {
 
     private void uploadToWebService(int nextPage) {
 
-        AppDatabase database = AppDatabase.getInstance(context);
-        database.clearAllTables();
+        AppDatabase db = AppDatabase.getInstance(context);
+        db.clearAllTables();
 
         CuentaService service = mRetrofit.create(CuentaService.class);
         service.getAllUser(6, nextPage).enqueue(new Callback<List<Cuenta>>() {
@@ -126,49 +128,12 @@ public class ListaCuentasActivity extends AppCompatActivity {
                     List<Cuenta> newData = repository.getAll();
                     mAdapter.setCuentas(newData);
                     mAdapter.notifyDataSetChanged();
-
-                    mIsLoading = false;
                 }
             }
 
             @Override
             public void onFailure(Call<List<Cuenta>> call, Throwable t) {
                 // Maneja el error de la llamada al servicio MockAPI
-            }
-        });
-    }
-
-    private void DatosSinInternet(){
-
-        mIsLoading = true;
-
-        cdata.add(null);
-        mAdapter.notifyItemInserted(cdata.size() - 1);
-
-        AppDatabase db = AppDatabase.getInstance(ListaCuentasActivity.this);
-        CuentaRepository repository = db.cuentaRepository();
-
-        CuentaService service = mRetrofit.create(CuentaService.class);
-
-        List<Cuenta> unsyncedCuentas = repository.getUnsyncedCuentas();
-
-        service.uploadCuentas(unsyncedCuentas).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    for (Cuenta cuenta : unsyncedCuentas) {
-                        cuenta.setSynced(true);
-                        repository.updateCuenta(cuenta);
-                    }
-                    Log.i("MAIN_APP  Page:", "Registro");
-                } else {
-                    // Manejar error de la llamada al servicio MockAPI
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                // Manejar error de la llamada al servicio MockAPI
             }
         });
     }
@@ -192,13 +157,8 @@ public class ListaCuentasActivity extends AppCompatActivity {
                     mIsLoading = false;
                 }
             }
-
             @Override
-            public void onFailure(Call<List<Cuenta>> call, Throwable t) {
-
-            }
+            public void onFailure(Call<List<Cuenta>> call, Throwable t) { }
         });
-
-
     }
 }

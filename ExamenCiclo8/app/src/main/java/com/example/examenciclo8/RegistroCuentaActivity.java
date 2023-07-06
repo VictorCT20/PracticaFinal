@@ -57,47 +57,22 @@ public class RegistroCuentaActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // llamar a retrofit
+                AppDatabase database = AppDatabase.getInstance(context);
+                CuentaRepository cuentaRepository = database.cuentaRepository();
 
-                if(!isNetworkConnected()) {
-                    AppDatabase database = AppDatabase.getInstance(context);
-                    CuentaRepository cuentaRepository = database.cuentaRepository();
+                // Obtener el último ID registrado en la base de datos
+                int lastId = cuentaRepository.getLastId();
 
-                    Cuenta cuenta = new Cuenta();
-                    cuenta.setNombre(etNombre.getText().toString());
-                    cuenta.setSynced(false);
+                Cuenta cuenta = new Cuenta();
+                cuenta.setId(lastId + 1); // Asignar el nuevo ID incrementado en uno
+                cuenta.setNombre(etNombre.getText().toString());
+                cuenta.setSynced(false);
 
-                    cuentaRepository.create(cuenta);
-                    Log.i("MAIN_APP: DB", new Gson().toJson(cuenta));
-                    Intent intent =  new Intent(RegistroCuentaActivity.this, ListaCuentasActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-                else{
-                    CuentaService service = mRetrofit.create(CuentaService.class);
-                    Cuenta cuenta = new Cuenta();
-                    cuenta.setNombre(etNombre.getText().toString());
-                    cuenta.setSynced(true);
-
-                    Call<Cuenta> call = service.create(cuenta);
-
-                    call.enqueue(new Callback<Cuenta>() {
-                        @Override
-                        public void onResponse(Call<Cuenta> call, Response<Cuenta> response) {
-                            Log.i("MAIN_APP",  String.valueOf(response.code()));
-
-                            Intent intent =  new Intent(RegistroCuentaActivity.this, ListaCuentasActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-
-                        @Override
-                        public void onFailure(Call<Cuenta> call, Throwable t) {
-
-                        }
-                    });
-                }
-
-
+                cuentaRepository.create(cuenta);
+                Log.i("MAIN_APP: DB", new Gson().toJson(cuenta));
+                Intent intent = new Intent(RegistroCuentaActivity.this, ListaCuentasActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 

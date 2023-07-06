@@ -28,4 +28,10 @@ public interface CuentaRepository {
     @Update
     void updateCuenta(Cuenta cuenta);
 
+    @Query("SELECT MAX(id) FROM Cuentas")
+    int getLastId();
+
+    @Query("SELECT * FROM Cuentas WHERE id = :cuentaId")
+    Cuenta findCuentaById(int cuentaId);
+
 }

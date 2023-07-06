@@ -11,6 +11,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/tvTitu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cuentas"
+            android:textSize="34sp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvListaCuentas"
             android:layout_width="match_parent"
@@ -23,6 +30,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Registrar" />
+
+        <Button
+            android:id="@+id/bttnActualizar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Actualizar" />
     </LinearLayout>
 
 </LinearLayout>
