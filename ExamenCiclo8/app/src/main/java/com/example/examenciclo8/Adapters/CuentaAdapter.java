@@ -30,7 +30,6 @@ import retrofit2.Retrofit;
 public class CuentaAdapter extends RecyclerView.Adapter {
 
     private List<Cuenta> cuentas;
-    Retrofit mRetrofit;
     private Context context;
 
     public CuentaAdapter(List<Cuenta> cuentas, Context context) {
@@ -66,7 +65,6 @@ public class CuentaAdapter extends RecyclerView.Adapter {
 
 
         tvName.setText(item.getNombre());
-        mRetrofit = RetrofitU.build();
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -115,7 +115,7 @@ public class ListaCuentasActivity extends AppCompatActivity {
         db.clearAllTables();
 
         CuentaService service = mRetrofit.create(CuentaService.class);
-        service.getAllUser(6, nextPage).enqueue(new Callback<List<Cuenta>>() {
+        service.getAllUser(100, nextPage).enqueue(new Callback<List<Cuenta>>() {
             @Override
             public void onResponse(Call<List<Cuenta>> call, Response<List<Cuenta>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -145,7 +145,7 @@ public class ListaCuentasActivity extends AppCompatActivity {
 
         CuentaService service = mRetrofit.create(CuentaService.class);
         Log.i("MAIN_APP  Page:", String.valueOf(nextPage));
-        service.getAllUser(6, nextPage).enqueue(new Callback<List<Cuenta>>() {
+        service.getAllUser(100, nextPage).enqueue(new Callback<List<Cuenta>>() { // Cambia el número de registros por página según tus necesidades
             @Override
             public void onResponse(Call<List<Cuenta>> call, Response<List<Cuenta>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -155,10 +155,18 @@ public class ListaCuentasActivity extends AppCompatActivity {
                     cdata.addAll(response.body());
                     mAdapter.notifyDataSetChanged();
                     mIsLoading = false;
+
+                    // Si hay más registros disponibles, cargar la siguiente página
+                    if (response.body().size() >= 100) { // Cambia el número de registros por página según tus necesidades
+                        loadMore(nextPage + 1);
+                    }
                 }
             }
+
             @Override
-            public void onFailure(Call<List<Cuenta>> call, Throwable t) { }
+            public void onFailure(Call<List<Cuenta>> call, Throwable t) {
+                // Manejar error de la llamada al servicio MockAPI
+            }
         });
     }
 }

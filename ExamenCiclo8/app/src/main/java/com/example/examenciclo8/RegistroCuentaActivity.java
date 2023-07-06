@@ -35,9 +35,6 @@ public class RegistroCuentaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro_cuenta);
 
-
-
-
         Button btnRegistrar = findViewById(R.id.bttnRegistrar);
         Button btnVolver = findViewById(R.id.bttnVolver);
         EditText etNombre = findViewById(R.id.etNombre);
